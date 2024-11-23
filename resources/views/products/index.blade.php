@@ -49,9 +49,23 @@
 
 @push('scripts')
     <script>
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
         const products = @json([]);
-        $(document).ready(function() {
-            console.log('Page loaded');
+        $('#product-form').submit(function(e) {
+            e.preventDefault();
+            const formData = $(this).serialize();
+
+            $.post('/products', formData, function(response) {
+                if (response.success) {
+                    console.log('Product added');
+                }
+            }).fail(function(xhr) {
+                console.error('Error:', xhr.responseText);
+            });
         });
     </script>
 @endpush

@@ -13,6 +13,24 @@ class ProductController extends Controller
         return view('products.index', ['products' => []]);
     }
 
+    public function store(Request $request)
+    {
+        $data = $this->loadData();
+
+        $newEntry = [
+            'product_name' => $request->product_name,
+            'quantity' => (int)$request->quantity,
+            'price' => (float)$request->price,
+            'datetime' => now()->toDateTimeString(),
+            'total_value' => $request->quantity * $request->price
+        ];
+
+        $data[] = $newEntry;
+        $this->saveData($data);
+
+        return response()->json(['success' => true, 'data' => $data]);
+    }
+
     private function loadData()
     {
         if (!Storage::exists($this->fileName)) {
