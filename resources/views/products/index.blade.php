@@ -48,33 +48,11 @@
 @endsection
 
 @push('scripts')
+    <script src="{{ asset('js/products.js') }}"></script>
     <script>
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
+        const products = @json($products);
+        $(document).ready(function() {
+            initializeTable(products);
         });
-        const products = @json([]);
-        $('#product-form').submit(function(e) {
-            e.preventDefault();
-            const formData = $(this).serialize();
-
-            $.post('/products', formData, function(response) {
-                if (response.success) {
-                    console.log('Product added');
-                }
-            }).fail(function(xhr) {
-                console.error('Error:', xhr.responseText);
-            });
-        });
-
-        function editItem(index) {
-            $.get(`/products/${index}`, function(response) {
-                const item = response.item;
-                console.log('Editing:', item);
-            }).fail(function(xhr) {
-                console.error('Error:', xhr.responseText);
-            });
-        }
     </script>
 @endpush

@@ -8,9 +8,11 @@ use Illuminate\Support\Facades\Storage;
 class ProductController extends Controller
 {
     private $fileName = 'products.json';
+
     public function index()
     {
-        return view('products.index', ['products' => []]);
+        $data = $this->loadData();
+        return view('products.index', ['products' => $data]);
     }
 
     public function store(Request $request)
@@ -40,6 +42,41 @@ class ProductController extends Controller
         }
 
         return response()->json(['item' => $data[$index]]);
+    }
+
+    public function update(Request $request, $index)
+    {
+        $data = $this->loadData();
+
+        if (!isset($data[$index])) {
+            return response()->json(['error' => 'Product not found'], 404);
+        }
+
+        $data[$index] = [
+            'product_name' => $request->product_name,
+            'quantity' => (int)$request->quantity,
+            'price' => (float)$request->price,
+            'datetime' => $data[$index]['datetime'],
+            'total_value' => $request->quantity * $request->price
+        ];
+
+        $this->saveData($data);
+        return response()->json(['success' => true, 'data' => $data]);
+    }
+
+    public function destroy($index)
+    {
+        $data = $this->loadData();
+
+        if (!isset($data[$index])) {
+            return response()->json(['error' => 'Product not found'], 404);
+        }
+
+        unset($data[$index]);
+        $data = array_values($data);
+        $this->saveData($data);
+
+        return response()->json(['success' => true, 'data' => $data]);
     }
 
     private function loadData()
