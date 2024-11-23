@@ -67,5 +67,14 @@
                 console.error('Error:', xhr.responseText);
             });
         });
+
+        function editItem(index) {
+            $.get(`/products/${index}`, function(response) {
+                const item = response.item;
+                console.log('Editing:', item);
+            }).fail(function(xhr) {
+                console.error('Error:', xhr.responseText);
+            });
+        }
     </script>
 @endpush

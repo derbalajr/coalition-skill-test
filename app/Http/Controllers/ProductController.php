@@ -31,6 +31,17 @@ class ProductController extends Controller
         return response()->json(['success' => true, 'data' => $data]);
     }
 
+    public function show($index)
+    {
+        $data = $this->loadData();
+
+        if (!isset($data[$index])) {
+            return response()->json(['error' => 'Product not found'], 404);
+        }
+
+        return response()->json(['item' => $data[$index]]);
+    }
+
     private function loadData()
     {
         if (!Storage::exists($this->fileName)) {
